@@ -4,6 +4,7 @@ import Scheduler from "super-simple-scheduler";
 import { ISuperSimpleQueueHelper } from "@/service/infrastructure/SuperSimpleQueue/SuperSimpleQueueHelper.js";
 import { Monitor, MonitorType, supportsGeoCheck } from "@/types/monitor.js";
 const SERVICE_NAME = "JobQueue";
+const ESCALATION_JOB_INTERVAL_MS = 10 * 1000;
 
 type QueueJobFailure = {
 	monitorId: string | number;
@@ -106,7 +107,7 @@ export class SuperSimpleQueue implements ISuperSimpleQueue {
 			}
 
 			this.scheduler.addJob({ id: "cleanup-orphaned", template: "cleanup-orphaned", active: true });
-			this.scheduler.addJob({ id: "escalation-job", template: "escalation-job", active: true, repeat: 60 * 1000 });
+			this.scheduler.addJob({ id: "escalation-job", template: "escalation-job", active: true, repeat: ESCALATION_JOB_INTERVAL_MS });
 			this.scheduler.addJob({ id: "cleanup-retention", template: "cleanup-retention-job", active: true, repeat: 24 * 60 * 60 * 1000 });
 
 			return true;
